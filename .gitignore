@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# Environnement pixi (recréé par `pixi install`, jamais versionné)
+# ---------------------------------------------------------------------------
+/.pixi/
+.pixi/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------------------
+# Matrices HDF5
+# ---------------------------------------------------------------------------
+# Les matrices complètes (18 bits x 21 D2O) font 500 Mo - 3 Go : au-dessus de la
+# limite dure de 100 Mo par fichier de GitHub, un `git push` direct est refuse.
+# Elles sont donc exclues par defaut. Deux options si tu veux les versionner :
+#   1) git-lfs :  git lfs track "*.h5"  puis re-autoriser ici avec  !*.h5
+#   2) les publier en release / depot externe et ne versionner que les scripts
+*.h5
+*.hdf5
+
+# ---------------------------------------------------------------------------
+# Sorties de simulation / figures intermediaires
+# ---------------------------------------------------------------------------
+# dossiers temporaires de main_matrix.py
+pdbs_*/
+simul_*/
+# sorties Pepsi-SANS hors matrice
+*_primus_out/
+*_deuterated_pdbs/
+
+# ---------------------------------------------------------------------------
+# Divers
+# ---------------------------------------------------------------------------
+*.log
+*.tmp
+*~
+.DS_Store

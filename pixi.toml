@@ -1,0 +1,56 @@
+[workspace]
+authors = ["Homero Leandro Sanchez Moreira <homero.sanchez-moreira@etu.umontpellier.fr>"]
+channels = ["rapidsai", "nvidia", "conda-forge"]
+name = "sans-matrix"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+# ---------------------------------------------------------------------------
+# Environnement de generation / analyse des matrices SANS
+# (equivalent a l'environnement de python_SANS_matrix/javier)
+#   - etape 1-2 : main_matrix.py, bspline_fit.py, read_matrix.py  (h5py, scipy, gemmi)
+#   - etape 3-4 : spline_clustering.py, compute_cluster_average.py (cuml GPU, hdbscan, skfda)
+# cuML (RAPIDS) n'existe que sous Linux x86_64 avec CUDA -> pas de macOS.
+# ---------------------------------------------------------------------------
+
+[dependencies]
+python = "3.13.*"
+cuda-version = "13.3.*"
+numpy = "2.4.*"
+scipy = "1.16.*"
+h5py = "3.16.*"
+matplotlib = "3.10.*"
+scikit-learn = "1.9.*"
+scikit-fda = "0.10.1.*"
+hdbscan = "0.8.*"
+cuml = "26.06.*"
+# gemmi : absent de l'env de javier, mais requis par main_matrix.py (parsing PDB
+# + deuteration). Ajoute ici pour que l'env couvre tout le pipeline.
+gemmi = "0.7.*"
+
+[tasks]
+# --- matrice brute (Pepsi-SANS) --------------------------------------------
+# usage : pixi run matrix --pdb ../data/6HWM/6HWM_H.pdb --mode complete ...
+matrix = "python main_matrix.py"
+
+# --- ajustement B-spline + export compact ---------------------------------
+bspline = "python bspline_fit.py"
+
+# --- lecture / controle / fitness de la matrice ---------------------------
+read = "python read_matrix.py"
+
+# --- projections + clustering (GPU) ---------------------------------------
+cluster = "python spline_clustering.py"
+cluster-tsne = "python spline_clustering.py --tsne"
+cluster-umap = "python spline_clustering.py --umap"
+cluster-all = "python spline_clustering.py --all"
+cluster-umap-hdbscan = "python spline_clustering.py --umap-clusters"
+
+# --- moyennes par cluster -------------------------------------------------
+cluster-avg = "python compute_cluster_average.py"
+
+# --- visualisation des clusters (necessite les labels hdbscan) -------------
+# usage : pixi run view-umap <matrice>.h5 [--info|--max-curves N|--save fig.png]
+view = "python view_clusters.py"
+view-tsne = "python view_clusters.py --tsne"
+view-umap = "python view_clusters.py --umap"
